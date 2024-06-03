@@ -40,18 +40,18 @@ def loss_func(user_matrix, item_matrix, tar_matrix):
 def update_factors(user_matrix, item_matrix, gradients_user, gradients_item, lr, Lambda):
     # 更新用户和物品矩阵
     user_matrix -= lr * (gradients_user + Lambda * user_matrix)
-    item_matrix -= lr * (gradients_item.T + Lambda * item_matrix)  # 注意转置gradients_item以匹配item_matrix的形状
+    item_matrix -= lr * (gradients_item + Lambda * item_matrix)  # 注意转置gradients_item以匹配item_matrix的形状
 
 
 def matrix_factorization(user_matrix, item_matrix, tar_matrix, epochs, lr, Lambda):
     for epoch in tqdm(range(epochs)):
         # 计算预测矩阵
-        pred_matrix = np.dot(user_matrix, item_matrix.T)
+        pred_matrix = np.dot(user_matrix, item_matrix)
 
         # 计算梯度
         error_matrix = tar_matrix - pred_matrix
-        gradients_user = 2 * np.dot(error_matrix, item_matrix)
-        gradients_item = 2 * np.dot(error_matrix.T, user_matrix)
+        gradients_user = 2 * np.dot(error_matrix, item_matrix.T)
+        gradients_item = 2 * np.dot(user_matrix.T, error_matrix)
 
         # 添加正则化项
         gradients_user += Lambda * user_matrix
