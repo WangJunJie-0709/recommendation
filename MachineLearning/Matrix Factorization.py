@@ -40,7 +40,7 @@ def loss_func(user_matrix, item_matrix, tar_matrix):
 def update_factors(user_matrix, item_matrix, gradients_user, gradients_item, lr, Lambda):
     # 更新用户和物品矩阵
     user_matrix -= lr * (gradients_user + Lambda * user_matrix)
-    item_matrix -= lr * (gradients_item + Lambda * item_matrix)  # 注意转置gradients_item以匹配item_matrix的形状
+    item_matrix -= lr * (gradients_item + Lambda * item_matrix)
 
 
 def matrix_factorization(user_matrix, item_matrix, tar_matrix, epochs, lr, Lambda):
