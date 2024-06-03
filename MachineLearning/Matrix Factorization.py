@@ -37,17 +37,31 @@ def loss_func(user_matrix, item_matrix, tar_matrix):
     return loss
 
 
-def matrix_factorization(user_matrix, item_matrix, tar_matrix, epoches, lr, Lambda):
-    embedding_dims = len(user_matrix[0])
-    for epoch in tqdm(range(epoches)):
-        for i in range(len(user_matrix)):
-            for j in range(len(item_matrix[0])):
-                eij = tar_matrix[i, j] - np.dot(user_matrix[i, :], item_matrix[:, j])
-                for embedding_dim in range(embedding_dims):
-                    user_matrix[i][embedding_dim] += lr * (2 * eij * item_matrix[embedding_dim][j] - Lambda * user_matrix[i][embedding_dim])
-                    item_matrix[embedding_dim][j] += lr * (2 * eij * user_matrix[i][embedding_dim] - Lambda * item_matrix[embedding_dim][j])
+def update_factors(user_matrix, item_matrix, gradients_user, gradients_item, lr, Lambda):
+    # 更新用户和物品矩阵
+    user_matrix -= lr * (gradients_user + Lambda * user_matrix)
+    item_matrix -= lr * (gradients_item.T + Lambda * item_matrix)  # 注意转置gradients_item以匹配item_matrix的形状
 
-        loss = loss_func(user_matrix, item_matrix, tar_matrix)
+
+def matrix_factorization(user_matrix, item_matrix, tar_matrix, epochs, lr, Lambda):
+    for epoch in tqdm(range(epochs)):
+        # 计算预测矩阵
+        pred_matrix = np.dot(user_matrix, item_matrix.T)
+
+        # 计算梯度
+        error_matrix = tar_matrix - pred_matrix
+        gradients_user = 2 * np.dot(error_matrix, item_matrix)
+        gradients_item = 2 * np.dot(error_matrix.T, user_matrix)
+
+        # 添加正则化项
+        gradients_user += Lambda * user_matrix
+        gradients_item += Lambda * item_matrix
+
+        # 更新因子矩阵
+        update_factors(user_matrix, item_matrix, gradients_user, gradients_item, lr, Lambda)
+
+        # 计算并打印损失
+        loss = np.sum(error_matrix ** 2)
         print('=' * 20 + f'epoch:{epoch}, loss:{loss}' + '=' * 20)
 
 
