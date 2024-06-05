@@ -39,7 +39,7 @@ async def crawler(fname: str):
             生产者协程
             """
 
-            for pn in range(16, 0, -1):
+            for pn in range(100, 0, -1):
                 # 生产者使用Queue.put不断地将页码pn填入任务队列task_queue
                 await task_queue.put(pn)
             # 这里需要nonlocal来允许对闭包外的变量的修改操作（类似于引用传递和值传递的区别）
@@ -72,7 +72,7 @@ async def crawler(fname: str):
                         return
                 else:
                     # 执行被分派的任务，即爬取pn页的帖子列表
-                    threads = await client.get_threads(fname, pn)
+                    threads = await client.get_threads(fname, pn, is_good=True)
 
                     for thread in threads:
                         replys = await client.get_posts(thread.tid, rn=100, sort=PostSortType.HOT, with_comments=True)
