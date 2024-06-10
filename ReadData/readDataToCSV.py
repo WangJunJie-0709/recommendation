@@ -1,4 +1,6 @@
 import csv
+import os
+
 def text_save(srcPath, dstPath, rows=None, column_name=None):
     '''
     将txt文件写入csv
@@ -6,6 +8,8 @@ def text_save(srcPath, dstPath, rows=None, column_name=None):
     :param dstPath:
     :return:
     '''
+    if os.path.exists(dstPath):
+        os.remove(dstPath)
     data = []
     with open(srcPath, 'r') as f:
         for i, line in enumerate(f):
@@ -29,10 +33,10 @@ if __name__ == '__main__':
     item_src_path = r'../dataset/aliyun_tianchi/tianchi_fresh_comp_train_item_online/tianchi_fresh_comp_train_item_online.txt'
     item_col_name = ['item_id', 'item_geohash', 'item_category']
     item_dst_path = r'../tianchi_fresh_comp_train_item_online.csv'
-    text_save(item_src_path, item_dst_path, rows=500000, column_name=item_col_name)
+    text_save(item_src_path, item_dst_path, rows=5000, column_name=item_col_name)
 
     # 写入用户与物品交互内容
     user_src_path = r'../dataset/aliyun_tianchi/tianchi_fresh_comp_train_user_online_partA/tianchi_fresh_comp_train_user_online_partA.txt'
     user_col_name = ['user_id', 'item_id', 'behavior_type', 'user_geohash', 'item_category', 'time']
     user_dst_path = r'../tianchi_fresh_comp_train_user_online.csv'
-    text_save(user_src_path, user_dst_path, rows=1e5, column_name=user_col_name)
+    text_save(user_src_path, user_dst_path, rows=1e3, column_name=user_col_name)

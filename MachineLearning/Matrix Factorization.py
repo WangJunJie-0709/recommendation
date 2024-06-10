@@ -43,21 +43,19 @@ def update_factors(user_matrix, item_matrix, gradients_user, gradients_item, lr,
     item_matrix -= lr * (gradients_item + Lambda * item_matrix)
 
 
-
-def matrix_factorization(user_matrix, item_matrix, tar_matrix, epochs, lr, Lambda):
+def matrix_factorization(user_matrix, item_matrix, tar_matrix, epochs, lr, Lambda=0.1):
     for epoch in tqdm(range(epochs)):
         # 计算预测矩阵
         pred_matrix = np.dot(user_matrix, item_matrix)
 
         # 计算梯度
         error_matrix = tar_matrix - pred_matrix
-        gradients_user = 2 * np.dot(error_matrix, item_matrix.T)
-        gradients_item = 2 * np.dot(user_matrix.T, error_matrix)
+        gradients_user = -2 * np.dot(error_matrix, item_matrix.T)
+        gradients_item = -2 * np.dot(user_matrix.T, error_matrix)
 
         # 添加正则化项
-        gradients_user += Lambda * user_matrix
-        gradients_item += Lambda * item_matrix
-
+        gradients_user += 2 * Lambda * user_matrix
+        gradients_item += 2 * Lambda * item_matrix
         # 更新因子矩阵
         update_factors(user_matrix, item_matrix, gradients_user, gradients_item, lr, Lambda)
 
@@ -70,9 +68,9 @@ if __name__ == '__main__':
     user_df = read_df('../tianchi_fresh_comp_train_user_online.csv', type='user')
     item_df = read_df('../tianchi_fresh_comp_train_item_online.csv', type='item')
     embedding_dim = 16
-    epoches = 30
-    lr = 0.001
-    Lambda = 0.01
+    epochs = 30
+    lr = 1e-4
+    Lambda = 0.1
     user_matrix, item_matrix, tar_matrix = init_matrix(user_df, item_df, embedding_dim)
-    matrix_factorization(user_matrix, item_matrix, tar_matrix, epoches=epoches, lr=lr, Lambda=Lambda)
+    matrix_factorization(user_matrix, item_matrix, tar_matrix, epochs=epochs, lr=lr, Lambda=Lambda)
 
