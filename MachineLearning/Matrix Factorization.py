@@ -43,6 +43,7 @@ def update_factors(user_matrix, item_matrix, gradients_user, gradients_item, lr,
     item_matrix -= lr * (gradients_item + Lambda * item_matrix)
 
 
+
 def matrix_factorization(user_matrix, item_matrix, tar_matrix, epochs, lr, Lambda):
     for epoch in tqdm(range(epochs)):
         # 计算预测矩阵
