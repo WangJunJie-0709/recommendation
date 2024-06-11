@@ -3,4 +3,4 @@ dataset
 *.csv
 *.idea
 *.iml
-*.logs/
+../*/logs/
