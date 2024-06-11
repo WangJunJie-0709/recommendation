@@ -41,6 +41,7 @@ def update_factors(user_matrix, item_matrix, gradients_user, gradients_item, lr,
     # 更新用户和物品矩阵
     user_matrix -= lr * (gradients_user + Lambda * user_matrix)
     item_matrix -= lr * (gradients_item + Lambda * item_matrix)
+    return user_matrix, item_matrix
 
 
 def matrix_factorization(user_matrix, item_matrix, tar_matrix, epochs, lr, Lambda=0.1):
@@ -68,9 +69,9 @@ if __name__ == '__main__':
     user_df = read_df('../tianchi_fresh_comp_train_user_online.csv', type='user')
     item_df = read_df('../tianchi_fresh_comp_train_item_online.csv', type='item')
     embedding_dim = 16
-    epochs = 30
+    epochs = 90
     lr = 1e-4
-    Lambda = 0.1
+    Lambda = 0.01
     user_matrix, item_matrix, tar_matrix = init_matrix(user_df, item_df, embedding_dim)
     matrix_factorization(user_matrix, item_matrix, tar_matrix, epochs=epochs, lr=lr, Lambda=Lambda)
 
